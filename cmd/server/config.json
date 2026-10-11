@@ -1,0 +1,1 @@
+{"port":"8080","name":"Test","version":"1.0.0.0", "token_ttl": 30, "DBConnection": "postgres://app:secret@localhost:5432/appdb?sslmode=disable", "LogFile": "./log.txt"}

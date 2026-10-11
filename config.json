@@ -1,0 +1,8 @@
+{
+  "port": "8080",
+  "name": "identity-service",
+  "version": "1.0.0",
+  "token_ttl": 300,
+  "db_connection": "postgres://app:secret@localhost:5432/appdb?sslmode=disable",
+  "LogFile": "./log.txt"
+}

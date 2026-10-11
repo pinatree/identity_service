@@ -1,0 +1,20 @@
+# Служебные и игнорируемые git-ом файлы
+.git
+.gitignore
+*.md
+*.log
+bin/
+tmp/
+.env
+.env.*
+**/.env
+identity-service
+migrate
+
+# Артефакты сборки и локальные журналы
+/.godoctor/
+
+# Документация не нужна в образе
+docs
+README.md
+Makefile

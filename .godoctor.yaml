@@ -1,0 +1,6 @@
+tools:
+  allowed:
+    - edit
+    - build
+    - test
+    - docs

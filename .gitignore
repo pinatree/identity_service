@@ -1,0 +1,9 @@
+# Артефакты сборки
+/identity-service
+/cmd/server/server
+
+# Журнал запуска (не коммитим локальные логи)
+/output.log
+
+# Управляемые godoctor данные (базы тестов, кэш)
+/.godoctor/

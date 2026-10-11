@@ -1,0 +1,56 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: identity-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: appdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d appdb"]
+      interval: 2s
+      timeout: 2s
+      retries: 15
+
+  # One-shot: применяет миграции и завершается с кодом 0.
+  # Не сервис — живёт ровно столько, сколько нужно для наката схемы.
+  # app стартует только после его успешного завершения.
+  migrate-db-oneshot:
+    image: identity-service:0.1.0
+    container_name: identity-migrate-db-oneshot
+    entrypoint: ["/app/migrate"]
+    command: ["up"]
+    environment:
+      DB_CONNECTION: postgres://app:secret@postgres:5432/appdb?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # Ключевой признак one-shot: не перезапускать после завершения.
+    # Без этого Docker будет крутить контейнер бесконечно.
+    restart: "no"
+    labels:
+      com.example.role: "one-shot"
+      com.example.purpose: "db-migration"
+
+  app:
+    image: identity-service:0.1.0
+    container_name: identity-app
+    restart: unless-stopped
+    environment:
+      DB_CONNECTION: postgres://app:secret@postgres:5432/appdb?sslmode=disable
+      PORT: "8080"
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate-db-oneshot:
+        condition: service_completed_successfully
+
+volumes:
+  pgdata:
